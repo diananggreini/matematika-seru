@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Clay: Luas Bangun Datar Gabungan (Kelas 5 SD)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Bubblegum Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clay: {
+                            bg: '#E0F2FE',
+                            card: '#FFFBEB',
+                            pink: '#FF85A1',
+                            yellow: '#FFD166',
+                            green: '#06D6A0',
+                            blue: '#118AB2',
+                            purple: '#9D4EDD',
+                            orange: '#FF9F1C',
+                            dark: '#2B2D42'
+                        }
+                    },
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        bubblegum: ['Bubblegum Sans', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: #DCEEFE;
+            background-image: radial-gradient(#C4E2FF 2px, transparent 2px);
+            background-size: 24px 24px;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* 3D Claymorphism Styling Effects */
+        .clay-box {
+            background: #FFFFFF;
+            border-radius: 30px;
+            box-shadow: 
+                4px 6px 0px rgba(0,0,0,0.06),
+                inset -6px -6px 12px rgba(0, 0, 0, 0.08),
+                inset 6px 6px 12px rgba(255, 255, 255, 0.9);
+            border: 4px solid #FFF;
+        }
+
+        .clay-card-yellow {
+            background: #FFED94;
+            box-shadow: inset -6px -6px 12px #e0cb56, inset 6px 6px 12px #ffffd2;
+        }
+
+        .clay-card-green {
+            background: #A7F3D0;
+            box-shadow: inset -6px -6px 12px #6ee7b7, inset 6px 6px 12px #ecfdf5;
+        }
+
+        /* Clay Soft Bouncy Button Effect */
+        .clay-btn {
+            position: relative;
+            border-radius: 24px;
+            transition: all 0.15s ease-in-out;
+            box-shadow: 
+                0px 8px 0px 0px var(--tw-shadow-color),
+                inset -4px -4px 8px rgba(0, 0, 0, 0.2),
+                inset 4px 4px 8px rgba(255, 255, 255, 0.7);
+            border: 3px solid rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+        }
+
+        .clay-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .clay-btn:active {
+            transform: translateY(5px);
+            box-shadow: 
+                0px 3px 0px 0px var(--tw-shadow-color),
+                inset -2px -2px 4px rgba(0, 0, 0, 0.2),
+                inset 2px 2px 4px rgba(255, 255, 255, 0.7);
+        }
+
+        /* SVG Clay Drop Shadow */
+        .clay-filter {
+            filter: drop-shadow(4px 6px 0px rgba(0,0,0,0.15));
+        }
+
+        /* Clay Robot Character Animations */
+        @keyframes clayBob {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        .animate-bob {
+            animation: clayBob 3.5s ease-in-out infinite;
+        }
+
+        /* Certificate Print Options */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #certificate-modal, #certificate-modal * {
+                visibility: visible;
+            }
+            #certificate-modal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                background: white !important;
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
+                box-shadow: none !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-3 md:p-6 text-slate-800">
+
+    <!-- Container Utama Aplikasi MPI -->
+    <div class="w-full max-w-4xl min-h-[630px] clay-box p-4 md:p-8 relative overflow-hidden flex flex-col justify-between">
+
+        <!-- Header Bar -->
+        <header class="flex justify-between items-center mb-4 z-10">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-clay-orange text-white rounded-2xl flex items-center justify-center shadow-lg border-2 border-white text-xl">
+                    <i class="fa-solid fa-shapes"></i>
+                </div>
+                <div>
+                    <h1 class="font-bubblegum text-2xl md:text-3xl text-clay-blue tracking-wide leading-none">Dunia Clay Matematika</h1>
+                    <span class="text-xs md:text-sm font-bold text-slate-500">Kelas 5 SD • Luas Bangun Datar Gabungan</span>
+                </div>
+            </div>
+            
+            <!-- Tombol Sound FX -->
+            <button onclick="toggleAudio()" id="btn-audio" class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md border-2 border-slate-200 text-slate-600 hover:bg-slate-50">
+                <i class="fa-solid fa-volume-high" id="icon-audio"></i>
+            </button>
+        </header>
+
+        <!-- ================= HALAMAN 1: HALAMAN JUDUL UTAMA ================= -->
+        <div id="page-home" class="flex flex-col items-center justify-center py-4 text-center space-y-6 z-10 my-auto">
+            
+            <!-- Mascot Claybot Maskot Visual 3D Clay -->
+            <div class="relative animate-bob">
+                <svg class="w-44 h-44 md:w-52 md:h-52 clay-filter" viewBox="0 0 200 200">
+                    <!-- Robot Head Clay Body -->
+                    <rect x="35" y="45" width="130" height="110" rx="35" fill="#118AB2" />
+                    <rect x="40" y="50" width="120" height="100" rx="30" fill="#06D6A0" />
+                    
+                    <!-- Antenna Clay -->
+                    <rect x="92" y="15" width="16" height="35" rx="8" fill="#FF9F1C" />
+                    <circle cx="100" cy="15" r="14" fill="#FF85A1" />
+                    <circle cx="97" cy="12" r="4" fill="#FFF" opacity="0.8"/>
+                    
+                    <!-- Face Screen -->
+                    <rect x="55" y="65" width="90" height="55" rx="18" fill="#2B2D42" />
+                    
+                    <!-- Clay Cute Eyes -->
+                    <circle cx="78" cy="90" r="10" fill="#FFD166" />
+                    <circle cx="122" cy="90" r="10" fill="#FFD166" />
+                    <circle cx="80" cy="88" r="4" fill="#FFF" />
+                    <circle cx="124" cy="88" r="4" fill="#FFF" />
+                    
+                    <!-- Blush -->
+                    <ellipse cx="68" cy="102" rx="7" ry="4" fill="#FF85A1" opacity="0.7"/>
+                    <ellipse cx="132" cy="102" rx="7" ry="4" fill="#FF85A1" opacity="0.7"/>
+
+                    <!-- Mouth Smile -->
+                    <path d="M 90 102 Q 100 112 110 102" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" />
+
+                    <!-- Clay Surface Highlights -->
+                    <path d="M 45 60 Q 90 52 145 60" stroke="#FFF" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.5"/>
+                </svg>
+            </div>
+
+            <div class="max-w-md space-y-2">
+                <h2 class="font-bubblegum text-3xl md:text-4xl text-clay-dark tracking-wide">Halo Teman-Teman!</h2>
+                <p class="text-slate-600 text-sm md:text-base leading-relaxed font-medium">
+                    Yuk, bantu <span class="font-bold text-clay-blue">Si Claybot</span> bertualang menghitung luas benda-benda dari tanah liat (*clay*) yang unik dan menggemaskan!
+                </p>
+            </div>
+
+            <!-- Tombol Mulai Petualangan -->
+            <div class="pt-2">
+                <button onclick="goToInstructions()" class="clay-btn shadow-amber-600 bg-clay-yellow hover:bg-yellow-300 text-slate-800 font-bold text-xl px-10 py-4 tracking-wide flex items-center space-x-3 group">
+                    <span>MULAI PETUALANGAN</span>
+                    <i class="fa-solid fa-play group-hover:translate-x-1 transition-transform"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= HALAMAN 2: PETUNJUK & NAMA SISWA ================= -->
+        <div id="page-instructions" class="hidden flex-col justify-between py-2 z-10 my-auto space-y-6">
+            <div class="text-center space-y-1">
+                <h2 class="font-bubblegum text-3xl text-clay-blue">Petunjuk Petualangan</h2>
+                <p class="text-slate-600 text-sm font-medium">Yuk baca sebentar langkah mudahnya sebelum mulai!</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Langkah 1 -->
+                <div class="clay-box clay-card-yellow p-4 text-center space-y-2 border-2 border-amber-200">
+                    <div class="w-12 h-12 bg-white rounded-full mx-auto flex items-center justify-center text-clay-orange text-xl shadow-sm">
+                        <i class="fa-solid fa-scissors"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800">1. Potong Bangun</h3>
+                    <p class="text-xs text-slate-700 leading-relaxed">Pisahkan bangun gabungan menjadi bentuk dasar (Persegi, Segitiga, Trapesium, dll).</p>
+                </div>
+
+                <!-- Langkah 2 -->
+                <div class="clay-box clay-card-green p-4 text-center space-y-2 border-2 border-emerald-200">
+                    <div class="w-12 h-12 bg-white rounded-full mx-auto flex items-center justify-center text-clay-green text-xl shadow-sm">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800">2. Hitung Luasnya</h3>
+                    <p class="text-xs text-slate-700 leading-relaxed">Cari luas dari masing-masing bangun datar menggunakan rumus yang tepat.</p>
+                </div>
+
+                <!-- Langkah 3 -->
+                <div class="clay-box bg-sky-200 p-4 text-center space-y-2 border-2 border-sky-300">
+                    <div class="w-12 h-12 bg-white rounded-full mx-auto flex items-center justify-center text-clay-blue text-xl shadow-sm">
+                        <i class="fa-solid fa-plus-circle"></i>
+                    </div>
+                    <h3 class="font-bold text-slate-800">3. Jumlahkan Total</h3>
+                    <p class="text-xs text-slate-700 leading-relaxed">Tambahkan semua luas bangun tersebut untuk menemukan jawaban akhir!</p>
+                </div>
+            </div>
+
+            <!-- Form Input Nama Panggilan -->
+            <div class="clay-box p-4 bg-white max-w-md mx-auto w-full text-center space-y-2 border-2 border-slate-200">
+                <label for="player-name" class="block font-bold text-slate-700 text-sm">Tulis Nama Panggilanmu di Sini:</label>
+                <input type="text" id="player-name" placeholder="Contoh: Budi" class="w-full px-4 py-3 rounded-2xl border-2 border-clay-blue text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-clay-pink text-slate-800" />
+            </div>
+
+            <div class="flex justify-center pt-2">
+                <button onclick="startQuiz()" class="clay-btn shadow-emerald-700 bg-clay-green hover:bg-emerald-400 text-white font-bold text-lg px-8 py-3 tracking-wide flex items-center space-x-2">
+                    <span>AKU SIAP, YUK MULAI!</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= HALAMAN 3: SOAL KUIS INTERAKTIF ================= -->
+        <div id="page-quiz" class="hidden flex-col space-y-4 z-10">
+            <!-- Counter Soal & Progress Bar -->
+            <div class="flex justify-between items-center bg-slate-100 p-3 rounded-2xl border-2 border-slate-200">
+                <div class="flex items-center space-x-2">
+                    <span class="font-bold text-xs md:text-sm text-slate-600">Soal Ke:</span>
+                    <span id="quiz-progress-text" class="font-bubblegum text-xl text-clay-blue">1 / 6</span>
+                </div>
+                <!-- Track Live Score -->
+                <div class="flex items-center space-x-4">
+                    <div class="w-36 md:w-48 bg-slate-200 h-4 rounded-full overflow-hidden border border-slate-300">
+                        <div id="quiz-progress-bar" class="bg-clay-green h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <div class="bg-clay-yellow px-3 py-1 rounded-xl text-xs font-bold border border-amber-300">
+                        Skor: <span id="current-score">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid Layout Soal dan Ilustrasi Clay 3D -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                
+                <!-- Sisi Kiri: Visual Maskot & Gambar Bangun Datar Clay (Dinamis SVG) -->
+                <div class="lg:col-span-5 flex flex-col items-center justify-center p-3 bg-sky-50 rounded-2xl border-2 border-sky-100 relative min-h-[270px]">
+                    
+                    <!-- Bubble Percakapan Claybot -->
+                    <div class="bg-white p-2.5 md:p-3 rounded-xl border-2 border-clay-blue text-xs text-slate-700 font-bold mb-2 shadow-sm text-center relative w-full">
+                        <span id="claybot-speech">Yuk bantu aku hitung benda clay ini!</span>
+                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-clay-blue"></div>
+                    </div>
+
+                    <!-- Container Ilustrasi SVG Clay Bangun Gabungan -->
+                    <div id="clay-shape-container" class="w-full flex items-center justify-center my-1">
+                        <!-- Content Rendered dynamically via JS -->
+                    </div>
+
+                    <!-- Mini Display Character Claybot -->
+                    <div class="flex items-center space-x-2 mt-1">
+                        <svg id="quiz-mascot" class="w-10 h-10 transition-transform" viewBox="0 0 200 200">
+                            <rect x="35" y="45" width="130" height="110" rx="35" fill="#118AB2" />
+                            <rect x="40" y="50" width="120" height="100" rx="30" fill="#06D6A0" />
+                            <rect x="55" y="65" width="90" height="55" rx="18" fill="#2B2D42" />
+                            <circle id="eye-left" cx="78" cy="90" r="10" fill="#FFD166" />
+                            <circle id="eye-right" cx="122" cy="90" r="10" fill="#FFD166" />
+                            <path id="mouth" d="M 90 102 Q 100 112 110 102" stroke="#FFF" stroke-width="5" stroke-linecap="round" fill="none" />
+                        </svg>
+                        <span class="text-xs font-bold text-clay-blue">Si Claybot</span>
+                    </div>
+                </div>
+
+                <!-- Sisi Kanan: Cerita Soal & Opsi Jawaban Clay -->
+                <div class="lg:col-span-7 flex flex-col justify-between space-y-3">
+                    
+                    <!-- Cerita Soal -->
+                    <div class="bg-white p-4 rounded-2xl border-2 border-slate-200 shadow-sm">
+                        <span id="question-title" class="inline-block bg-clay-pink text-white text-xs px-2.5 py-0.5 rounded-full font-bold mb-1">
+                            Objek Clay #1
+                        </span>
+                        <p id="question-text" class="text-slate-700 font-semibold text-sm md:text-base leading-relaxed">
+                            Loading Soal...
+                        </p>
+                    </div>
+
+                    <!-- Pilihan Jawaban Grid -->
+                    <div id="options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Dynamically Generated -->
+                    </div>
+
+                    <!-- Pembahasan Singkat Pop-up -->
+                    <div id="explanation-box" class="hidden p-3.5 bg-amber-50 rounded-2xl border-2 border-amber-300 text-xs text-slate-700 space-y-1">
+                        <div class="font-bold text-amber-800 flex items-center space-x-1">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span>Pembahasan Cara Menghitung:</span>
+                        </div>
+                        <p id="explanation-text" class="leading-relaxed">Penjelasan cara hitung...</p>
+                        <button onclick="nextQuestion()" class="mt-2 w-full clay-btn shadow-blue-700 bg-clay-blue text-white font-bold py-2.5 rounded-xl text-sm flex items-center justify-center space-x-2">
+                            <span>Lanjut ke Soal Berikutnya</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= HALAMAN 4: SKOR AKHIR & LAPORAN ================= -->
+        <div id="page-result" class="hidden flex-col items-center justify-center py-4 text-center space-y-5 z-10 my-auto">
+            
+            <div class="space-y-1">
+                <span class="bg-clay-green text-emerald-900 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Petualangan Selesai!</span>
+                <h2 class="font-bubblegum text-3xl md:text-4xl text-clay-blue">Hasil Nilai Kamu</h2>
+            </div>
+
+            <!-- Card Skor Clay -->
+            <div class="clay-box bg-white p-6 max-w-sm w-full border-4 border-clay-yellow shadow-xl space-y-3 relative overflow-hidden">
+                <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Nilai Akhir</div>
+                <div id="final-score" class="font-bubblegum text-6xl text-clay-orange tracking-tight">0</div>
+                <div id="final-message" class="text-sm font-semibold text-slate-700">Hebat Banget!</div>
+                
+                <div class="pt-2 border-t border-slate-100 flex justify-around text-xs text-slate-600 font-bold">
+                    <div>Jawaban Benar: <span id="correct-count" class="text-emerald-600 text-sm">0</span>/6</div>
+                </div>
+            </div>
+
+            <!-- Mascot Selebrasi -->
+            <div class="w-24 h-24">
+                <svg class="w-full h-full animate-bounce" viewBox="0 0 200 200">
+                    <rect x="35" y="45" width="130" height="110" rx="35" fill="#FF85A1" />
+                    <rect x="40" y="50" width="120" height="100" rx="30" fill="#FFD166" />
+                    <rect x="55" y="65" width="90" height="55" rx="18" fill="#2B2D42" />
+                    <circle cx="78" cy="85" r="10" fill="#FFF" />
+                    <circle cx="122" cy="85" r="10" fill="#FFF" />
+                    <path d="M 80 105 Q 100 120 120 105" stroke="#FFF" stroke-width="6" stroke-linecap="round" fill="none" />
+                </svg>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="restartQuiz()" class="clay-btn shadow-amber-600 bg-clay-yellow hover:bg-yellow-300 text-slate-800 font-bold px-6 py-3 rounded-2xl flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Main Lagi</span>
+                </button>
+                <button onclick="openCertificate()" class="clay-btn shadow-purple-700 bg-clay-purple hover:bg-purple-500 text-white font-bold px-6 py-3 rounded-2xl flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-award"></i>
+                    <span>Cetak Sertifikat</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-400 pt-3 z-10">
+            MPI Matematika SD • Media Pembelajaran Interaktif 3D Clay Style
+        </footer>
+
+    </div>
+
+    <!-- ================= MODAL SERTIFIKAT KELULUSAN (SIAP CETAK) ================= -->
+    <div id="certificate-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white p-6 md:p-10 rounded-3xl max-w-2xl w-full border-8 border-clay-yellow relative shadow-2xl space-y-4 text-center">
+            
+            <!-- Close Button (No Print) -->
+            <button onclick="closeCertificate()" class="no-print absolute top-4 right-4 w-10 h-10 bg-rose-100 text-rose-600 rounded-full font-bold flex items-center justify-center hover:bg-rose-200">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Certificate Header -->
+            <div class="space-y-1">
+                <div class="inline-block bg-clay-blue text-white text-xs font-bold px-4 py-1 rounded-full uppercase">Sertifikat Penghargaan</div>
+                <h2 class="font-bubblegum text-3xl md:text-4xl text-clay-dark tracking-wide">PETUALANG MATEMATIKA HEBAT</h2>
+                <p class="text-xs text-slate-500">Diberikan atas keberhasilan menyelesaikan Kuis Luas Bangun Datar Gabungan</p>
+            </div>
+
+            <!-- Certificate Body -->
+            <div class="py-4 border-y-2 border-dashed border-slate-200 space-y-3">
+                <p class="text-sm text-slate-600">Sertifikat ini secara resmi diberikan kepada:</p>
+                <h3 id="cert-student-name" class="font-bubblegum text-3xl md:text-4xl text-clay-pink tracking-wide">
+                    [Nama Siswa]
+                </h3>
+                <p class="text-sm text-slate-600 max-w-md mx-auto">
+                    Telah menyelesaikan kuis interaktif 3D Clay Matematika dengan meraih Nilai Akhir:
+                </p>
+                <div id="cert-score" class="font-bubblegum text-5xl text-clay-green">
+                    100
+                </div>
+            </div>
+
+            <!-- Signatures / Stempel -->
+            <div class="flex justify-between items-end pt-2 text-xs text-slate-500">
+                <div class="text-left space-y-1">
+                    <p>Tanggal: <span id="cert-date">11 November 2026</span></p>
+                    <p class="font-bold text-slate-700">MPI Matematika SD</p>
+                </div>
+                <!-- Stamp Clay Visual -->
+                <div class="w-20 h-20 bg-clay-yellow/20 rounded-full border-2 border-dashed border-clay-orange flex items-center justify-center rotate-12">
+                    <span class="font-bubblegum text-clay-orange text-xs text-center leading-tight">LULUS<br>SEMPURNA</span>
+                </div>
+                <div class="text-right space-y-1">
+                    <p class="font-bold text-slate-700">Pemandu Claybot</p>
+                    <p class="italic">Si Claybot Cute</p>
+                </div>
+            </div>
+
+            <!-- Certificate Action Buttons (No Print) -->
+            <div class="no-print pt-4 flex justify-center space-x-3">
+                <button onclick="window.print()" class="clay-btn shadow-blue-700 bg-clay-blue hover:bg-blue-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm flex items-center space-x-2">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Cetak / Simpan PDF</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ==========================================================================
+           DATA SOAL MATEMATIKA (6 BANGUN GABUNGAN: 7 BANGUN DATAR LENGKAP)
+           1. Persegi + Segitiga (Rumah Clay)
+           2. Persegi Panjang + Jajar Genjang (Taman & Terowongan Clay)
+           3. Layang-layang + Segitiga (Layangan Clay)
+           4. Belah Ketupat + Persegi Panjang (Mahkota Clay)
+           5. Trapesium + Persegi (Gaun Clay)
+           6. Jajar Genjang + Trapesium (Rumah Pohon Clay)
+           ========================================================================== */
+        const quizData = [
+            {
+                id: 1,
+                title: "Rumah Clay Imut",
+                story: "Si Claybot membuat miniatur rumah dari clay! Dinding rumah berbentuk Persegi (10 cm x 10 cm), dan atapnya berbentuk Segitiga dengan alas 10 cm dan tinggi 6 cm. Berapakah total luas permukaan depan rumah clay ini?",
+                options: [
+                    { text: "130 cm²", correct: true },
+                    { text: "160 cm²", correct: false },
+                    { text: "115 cm²", correct: false },
+                    { text: "140 cm²", correct: false }
+                ],
+                explanation: "1. Luas Dinding (Persegi) = 10 × 10 = 100 cm².<br>2. Luas Atap (Segitiga) = (10 × 6) ÷ 2 = 30 cm².<br><b>Total Luas Gabungan = 100 + 30 = 130 cm².</b>",
+                svgType: "house"
+            },
+            {
+                id: 2,
+                title: "Taman & Gazebo Clay",
+                story: "Si Claybot merancang taman mainan clay! Bagian utama taman berbentuk Persegi Panjang (12 cm x 8 cm) yang digabung dengan Gazebo berbentuk Jajar Genjang (alas 12 cm, tinggi 5 cm). Berapakah luas total taman clay ini?",
+                options: [
+                    { text: "144 cm²", correct: false },
+                    { text: "156 cm²", correct: true },
+                    { text: "168 cm²", correct: false },
+                    { text: "130 cm²", correct: false }
+                ],
+                explanation: "1. Luas Taman (Persegi Panjang) = 12 × 8 = 96 cm².<br>2. Luas Gazebo (Jajar Genjang) = 12 × 5 = 60 cm².<br><b>Total Luas Gabungan = 96 + 60 = 156 cm².</b>",
+                svgType: "garden"
+            },
+            {
+                id: 3,
+                title: "Layangan Clay Ceria",
+                story: "Claybot membuat hiasan layang-layang clay! Bagian badan layang-layang memiliki diagonal d1 = 12 cm dan d2 = 10 cm, lalu disambung dengan ekor berbentuk Segitiga (alas 10 cm, tinggi 8 cm). Berapakah total luas layangan clay tersebut?",
+                options: [
+                    { text: "100 cm²", correct: false },
+                    { text: "120 cm²", correct: false },
+                    { text: "100 cm²", correct: false },
+                    { text: "100 cm²", correct: false }
+                ],
+                // Updated correct options mapping:
+                options: [
+                    { text: "100 cm²", correct: true },
+                    { text: "110 cm²", correct: false },
+                    { text: "90 cm²", correct: false },
+                    { text: "120 cm²", correct: false }
+                ],
+                explanation: "1. Luas Badan (Layang-layang) = (12 × 10) ÷ 2 = 60 cm².<br>2. Luas Ekor (Segitiga) = (10 × 8) ÷ 2 = 40 cm².<br><b>Total Luas Gabungan = 60 + 40 = 100 cm².</b>",
+                svgType: "kite"
+            },
+            {
+                id: 4,
+                title: "Mahkota Raja Clay",
+                story: "Sebuah mahkota mainan dari clay tersusun atas hiasan Belah Ketupat di bagian atas (d1 = 8 cm, d2 = 6 cm) dan alas berbentuk Persegi Panjang di bagian bawah (10 cm x 4 cm). Berapakah total luas permukaan mahkota clay ini?",
+                options: [
+                    { text: "64 cm²", correct: true },
+                    { text: "72 cm²", correct: false },
+                    { text: "80 cm²", correct: false },
+                    { text: "56 cm²", correct: false }
+                ],
+                explanation: "1. Luas Hiasan (Belah Ketupat) = (8 × 6) ÷ 2 = 24 cm².<br>2. Luas Alas (Persegi Panjang) = 10 × 4 = 40 cm².<br><b>Total Luas Gabungan = 24 + 40 = 64 cm².</b>",
+                svgType: "crown"
+            },
+            {
+                id: 5,
+                title: "Gaun Cantik Clay",
+                story: "Pemandu Clay mewarnai gaun mainan yang terdiri dari rok berbentuk Trapesium (alas bawah 14 cm, alas atas 8 cm, tinggi 6 cm) serta sabuk berbentuk Persegi (4 cm x 4 cm) di atasnya. Berapakah luas total cetakan gaun clay ini?",
+                options: [
+                    { text: "82 cm²", correct: true },
+                    { text: "75 cm²", correct: false },
+                    { text: "94 cm²", correct: false },
+                    { text: "66 cm²", correct: false }
+                ],
+                explanation: "1. Luas Rok (Trapesium) = ((14 + 8) × 6) ÷ 2 = 66 cm².<br>2. Luas Sabuk (Persegi) = 4 × 4 = 16 cm².<br><b>Total Luas Gabungan = 66 + 16 = 82 cm².</b>",
+                svgType: "dress"
+            },
+            {
+                id: 6,
+                title: "Rumah Pohon Clay",
+                story: "Bangunan rumah pohon clay terdiri dari lantai berbentuk Jajar Genjang (alas 10 cm, tinggi 6 cm) dan tangga penopang berbentuk Trapesium (alas bawah 10 cm, alas atas 6 cm, tinggi 4 cm). Berapakah total luas permukaan rumah pohon ini?",
+                options: [
+                    { text: "85 cm²", correct: false },
+                    { text: "92 cm²", correct: true },
+                    { text: "78 cm²", correct: false },
+                    { text: "96 cm²", correct: false }
+                ],
+                explanation: "1. Luas Lantai (Jajar Genjang) = 10 × 6 = 60 cm².<br>2. Luas Tangga (Trapesium) = ((10 + 6) × 4) ÷ 2 = 32 cm².<br><b>Total Luas Gabungan = 60 + 32 = 92 cm².</b>",
+                svgType: "treehouse"
+            }
+        ];
+
+        /* ==========================================================================
+           STATE APLIKASI KUIS
+           ========================================================================== */
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "Teman Clay";
+        let isAudioOn = true;
+
+        /* Web Audio API Sintetis Sound Generator */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!isAudioOn) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3); // A5
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.08);
+                }
+            } catch (e) {
+                console.log("Audio ready after user interaction");
+            }
+        }
+
+        function toggleAudio() {
+            isAudioOn = !isAudioOn;
+            const icon = document.getElementById('icon-audio');
+            if (isAudioOn) {
+                icon.className = "fa-solid fa-volume-high";
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        /* Navigasi Halaman */
+        function goToInstructions() {
+            playSound('click');
+            document.getElementById('page-home').classList.add('hidden');
+            document.getElementById('page-instructions').classList.remove('hidden');
+            document.getElementById('page-instructions').classList.add('flex');
+        }
+
+        function startQuiz() {
+            playSound('click');
+            const inputName = document.getElementById('player-name').value.trim();
+            if (inputName !== "") {
+                playerName = inputName;
+            }
+            
+            document.getElementById('page-instructions').classList.add('hidden');
+            document.getElementById('page-instructions').classList.remove('flex');
+            document.getElementById('page-quiz').classList.remove('hidden');
+            document.getElementById('page-quiz').classList.add('flex');
+
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        /* Render SVG Gambar Clay Bangun Datar Gabungan secara Dinamis */
+        function renderClayShape(type) {
+            const container = document.getElementById('clay-shape-container');
+            let svgContent = "";
+
+            if (type === "house") {
+                // Rumah Clay (Persegi + Segitiga)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Atap Segitiga -->
+                    <polygon points="100,20 30,80 170,80" fill="#FF85A1" stroke="#FFF" stroke-width="4" />
+                    <text x="100" y="55" fill="#FFF" font-weight="bold" font-size="12" text-anchor="middle">t = 6 cm</text>
+                    <text x="100" y="75" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">alas = 10 cm</text>
+
+                    <!-- Dinding Persegi -->
+                    <rect x="40" y="80" width="120" height="100" rx="12" fill="#FFD166" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="135" fill="#2B2D42" font-weight="bold" font-size="13" text-anchor="middle">10 cm × 10 cm</text>
+                </svg>`;
+            } else if (type === "garden") {
+                // Taman & Gazebo (Persegi Panjang + Jajar Genjang)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Jajar Genjang Atas -->
+                    <polygon points="60,30 180,30 140,85 20,85" fill="#06D6A0" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="60" fill="#FFF" font-weight="bold" font-size="12" text-anchor="middle">a=12 cm, t=5 cm</text>
+
+                    <!-- Persegi Panjang Bawah -->
+                    <rect x="30" y="85" width="140" height="85" rx="10" fill="#118AB2" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="130" fill="#FFF" font-weight="bold" font-size="13" text-anchor="middle">12 cm × 8 cm</text>
+                </svg>`;
+            } else if (type === "kite") {
+                // Layangan Clay (Layang-layang + Segitiga)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Badan Layang-layang -->
+                    <polygon points="100,20 160,70 100,120 40,70" fill="#FF85A1" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="65" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">d1=12, d2=10</text>
+
+                    <!-- Ekor Segitiga -->
+                    <polygon points="100,120 150,180 50,180" fill="#FFD166" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="160" fill="#2B2D42" font-weight="bold" font-size="11" text-anchor="middle">a=10, t=8</text>
+                </svg>`;
+            } else if (type === "crown") {
+                // Mahkota (Belah Ketupat + Persegi Panjang)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Belah Ketupat Hiasan -->
+                    <polygon points="100,25 145,65 100,105 55,65" fill="#9D4EDD" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="70" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">d1=8, d2=6</text>
+
+                    <!-- Alas Persegi Panjang -->
+                    <rect x="35" y="105" width="130" height="65" rx="10" fill="#FF9F1C" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="142" fill="#FFF" font-weight="bold" font-size="12" text-anchor="middle">10 cm × 4 cm</text>
+                </svg>`;
+            } else if (type === "dress") {
+                // Gaun (Trapesium + Persegi)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Sabuk Persegi atas -->
+                    <rect x="80" y="25" width="40" height="40" rx="8" fill="#FFD166" stroke="#FFF" stroke-width="3"/>
+                    <text x="100" y="49" fill="#2B2D42" font-weight="bold" font-size="10" text-anchor="middle">4×4</text>
+
+                    <!-- Rok Trapesium -->
+                    <polygon points="70,65 130,65 165,160 35,160" fill="#FF85A1" stroke="#FFF" stroke-width="4"/>
+                    <text x="100" y="90" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">Atas: 8 cm</text>
+                    <text x="100" y="115" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">t = 6 cm</text>
+                    <text x="100" y="142" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">Bawah: 14 cm</text>
+                </svg>`;
+            } else if (type === "treehouse") {
+                // Rumah Pohon (Jajar Genjang + Trapesium)
+                svgContent = `
+                <svg class="w-48 h-48 clay-filter" viewBox="0 0 200 200">
+                    <!-- Jajar Genjang Atas -->
+                    <polygon points="50,25 170,25 140,85 20,85" fill="#06D6A0" stroke="#FFF" stroke-width="4"/>
+                    <text x="95" y="58" fill="#FFF" font-weight="bold" font-size="11" text-anchor="middle">a=10 cm, t=6 cm</text>
+
+                    <!-- Tangga Trapesium -->
+                    <polygon points="65,85 115,85 145,165 35,165" fill="#FF9F1C" stroke="#FFF" stroke-width="4"/>
+                    <text x="90" y="110" fill="#FFF" font-weight="bold" font-size="10" text-anchor="middle">Atas: 6 cm</text>
+                    <text x="90" y="130" fill="#FFF" font-weight="bold" font-size="10" text-anchor="middle">t = 4 cm</text>
+                    <text x="90" y="150" fill="#FFF" font-weight="bold" font-size="10" text-anchor="middle">Bawah: 10 cm</text>
+                </svg>`;
+            }
+
+            container.innerHTML = svgContent;
+        }
+
+        /* Muat Soal Berdasarkan Index */
+        function loadQuestion() {
+            const currentData = quizData[currentQuestionIndex];
+            
+            // Progress Bar & Counter
+            document.getElementById('quiz-progress-text').innerText = `${currentQuestionIndex + 1} / ${quizData.length}`;
+            const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+            // Reset Ekspresi Claybot Speech
+            document.getElementById('claybot-speech').innerText = `Halo ${playerName}! Yuk bantu aku hitung bangun ini!`;
+            updateMascotFace('neutral');
+
+            // Set Soal Teks
+            document.getElementById('question-title').innerText = `Objek Clay #${currentQuestionIndex + 1}: ${currentData.title}`;
+            document.getElementById('question-text').innerText = currentData.story;
+
+            // Render Gambar SVG Dinamis
+            renderClayShape(currentData.svgType);
+
+            // Sembunyikan Pembahasan
+            document.getElementById('explanation-box').classList.add('hidden');
+
+            // Render Options Button Clay
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+
+            const optionLetters = ['A', 'B', 'C', 'D'];
+            const shadowColors = ['shadow-pink-600', 'shadow-blue-600', 'shadow-amber-600', 'shadow-emerald-600'];
+            const bgColors = ['bg-pink-400', 'bg-sky-400', 'bg-amber-400', 'bg-emerald-400'];
+
+            currentData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `clay-btn ${shadowColors[idx % 4]} ${bgColors[idx % 4]} text-white font-bold p-3.5 rounded-2xl flex items-center space-x-3 text-left hover:brightness-105 transition-all text-sm md:text-base`;
+                btn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl bg-white/30 flex items-center justify-center font-bubblegum text-lg border border-white/50">${optionLetters[idx]}</span>
+                    <span>${opt.text}</span>
+                `;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        /* Update Ekspresi Muka Si Claybot */
+        function updateMascotFace(expression) {
+            const eyeL = document.getElementById('eye-left');
+            const eyeR = document.getElementById('eye-right');
+            const mouth = document.getElementById('mouth');
+
+            if (expression === 'happy') {
+                mouth.setAttribute('d', 'M 75 95 Q 100 125 125 95');
+                eyeL.setAttribute('r', '12');
+                eyeR.setAttribute('r', '12');
+            } else if (expression === 'sad') {
+                mouth.setAttribute('d', 'M 80 110 Q 100 95 120 110');
+                eyeL.setAttribute('r', '8');
+                eyeR.setAttribute('r', '8');
+            } else {
+                mouth.setAttribute('d', 'M 90 102 Q 100 112 110 102');
+                eyeL.setAttribute('r', '10');
+                eyeR.setAttribute('r', '10');
+            }
+        }
+
+        /* Handler Pilihan Jawaban */
+        function handleAnswer(selectedOpt, selectedBtn) {
+            // Disable all buttons in option
+            const allBtns = document.getElementById('options-container').querySelectorAll('button');
+            allBtns.forEach(btn => btn.disabled = true);
+
+            const currentData = quizData[currentQuestionIndex];
+            const speech = document.getElementById('claybot-speech');
+
+            if (selectedOpt.correct) {
+                playSound('correct');
+                score += 100 / quizData.length;
+                document.getElementById('current-score').innerText = Math.round(score);
+                selectedBtn.classList.add('ring-4', 'ring-white', 'scale-105');
+                speech.innerText = "YAY! Jawabanmu TEPAT BANGET! Kamu Hebat!";
+                updateMascotFace('happy');
+            } else {
+                playSound('wrong');
+                selectedBtn.classList.add('opacity-60', 'line-through');
+                speech.innerText = "Hampir Benar! Jangan menyerah, yuk pelajari caranya!";
+                updateMascotFace('sad');
+
+                // Highlight jawaban benar
+                allBtns.forEach((btn, idx) => {
+                    if (currentData.options[idx].correct) {
+                        btn.classList.add('ring-4', 'ring-emerald-300', 'animate-pulse');
+                    }
+                });
+            }
+
+            // Tampilkan pembahasan
+            document.getElementById('explanation-text').innerHTML = currentData.explanation;
+            document.getElementById('explanation-box').classList.remove('hidden');
+        }
+
+        /* Lanjut ke Soal Berikutnya / Hasil */
+        function nextQuestion() {
+            playSound('click');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        /* Tampilkan Halaman Hasil Akhir */
+        function showResults() {
+            document.getElementById('page-quiz').classList.add('hidden');
+            document.getElementById('page-quiz').classList.remove('flex');
+            document.getElementById('page-result').classList.remove('hidden');
+            document.getElementById('page-result').classList.add('flex');
+
+            const finalScoreVal = Math.round(score);
+            document.getElementById('final-score').innerText = finalScoreVal;
+            
+            const correctNum = Math.round((finalScoreVal / 100) * quizData.length);
+            document.getElementById('correct-count').innerText = correctNum;
+
+            const msg = document.getElementById('final-message');
+            if (finalScoreVal >= 80) {
+                msg.innerText = `Wah luar biasa ${playerName}! Kamu master bangun datar clay! 🌟`;
+            } else if (finalScoreVal >= 60) {
+                msg.innerText = `Bagus sekali ${playerName}! Terus berlatih agar makin jago ya! 👍`;
+            } else {
+                msg.innerText = `Tetap semangat ${playerName}! Coba main sekali lagi yuk! 💪`;
+            }
+        }
+
+        /* Reset/Main Lagi */
+        function restartQuiz() {
+            playSound('click');
+            document.getElementById('page-result').classList.add('hidden');
+            document.getElementById('page-result').classList.remove('flex');
+            document.getElementById('page-home').classList.remove('hidden');
+            document.getElementById('page-home').classList.add('flex');
+        }
+
+        /* Modal Sertifikat */
+        function openCertificate() {
+            playSound('click');
+            document.getElementById('cert-student-name').innerText = playerName;
+            document.getElementById('cert-score').innerText = Math.round(score);
+            
+            // Set tanggal hari ini
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('cert-date').innerText = today.toLocaleDateString('id-ID', options);
+
+            const modal = document.getElementById('certificate-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeCertificate() {
+            playSound('click');
+            const modal = document.getElementById('certificate-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
+</body>
+</html>
